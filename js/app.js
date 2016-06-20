@@ -3,13 +3,14 @@ var App = React.createClass({
     render() {
         return (
             // </Header>
-            <
-            Content / >
-            // </Footer>
+            <div>
+              <Content/>
+            </div>
         );
     }
 });
-//Header
+
+// Header
 var Header = React.createClass({
     render() {
 
@@ -18,7 +19,12 @@ var Header = React.createClass({
 //content
 var Content = React.createClass({
     render() {
-
+      return(
+        <div>
+          <h4>List User</h4>
+          <ListUser/>
+        </div>
+      );
     }
 });
 
@@ -30,23 +36,24 @@ var User = React.createClass({
         alert('click remove');
     },
     onView() {
-        alert('view')
+        alert('view');
     },
     render() {
         return (
             <li>
-                <img src = {this.props.src} alt = "alt" / >
+                <img src = {this.props.src} alt = "alt" />
                 <span>{this.props.name} </span>
                 <button onClick = {this.onRemove}> Remove </button>
-                <button onClick = {this.onView} > View < /button>
-            </li >
+                <button onClick = {this.onView}> View </button>
+            </li>
         );
     }
 });
 
 var ListUser = React.createClass({
     getInitialState() {
-        var users = [{
+      return{
+        users : [{
             "id": "1",
             "firstName": "Tom",
             "lastName": "Cruise",
@@ -65,13 +72,17 @@ var ListUser = React.createClass({
             "photo": "http://georgesjournal.files.wordpress.com/2012/02/007_at_50_ge_pierece_brosnan.jpg",
             "friends": [2]
         }]
-
-    }
+      }
+    },
     render() {
-        var list = this.state.users.map(function(user,index)){
-            var UserRender = <User key = {index} name = {user.name} src = {user.src} />
-        }
+        var list = this.state.users.map(function(user,index){
+            var userRender = <User key = {index} name = {user.firstName} src = {user.photo} />
+            return userRender;
+        });
+        return(
+          <ul>{list}</ul>
+        );
     }
 });
 
-var AppComponet = React.render( < App / > , document.getElementById("appMUser"));
+var AppComponent = React.render( <App /> , document.getElementById("appMUser"));
