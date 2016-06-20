@@ -2,7 +2,6 @@
 var App = React.createClass({
     render() {
         return (
-            // </Header>
             <div>
               <Content/>
             </div>
@@ -31,12 +30,6 @@ var Content = React.createClass({
 var User = React.createClass({
     propTypes: {
         name: React.PropTypes.string.isRequired
-    },
-    onRemove() {
-        alert('click remove');
-    },
-    onView() {
-        alert('view');
     },
     render() {
         return (
@@ -76,7 +69,7 @@ var ListUser = React.createClass({
     },
     render() {
         var list = this.state.users.map(function(user,index){
-            var userRender = <User key = {index} name = {user.firstName} src = {user.photo} />
+            var userRender = <User key = {index} value = {user.id} name = {user.firstName} src = {user.photo} />
             return userRender;
         });
         return(
