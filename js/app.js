@@ -1,28 +1,20 @@
 console.clear();
 
-var TaskList = React.createClass({
+var UsersList = React.createClass({
     render: function(){
-
-        var displayTask  = function(task, taskIndex){
-            return <li>
-                {task}
-                <button> Delete </button>
-            </li>;
-        };
-
         return <ul>
-            {this.props.users.map((task, taskIndex) =>
-                <li key={taskIndex}>
-                    <img src = {task.photo} alt = "alt" />
-                    {task.firstName}
-                    <button onClick={this.props.deleteTask} value={taskIndex}> Delete </button>
+            {this.props.users.map((user, userIndex) =>
+                <li key={userIndex}>
+                    <img src = {user.photo} width = '70' height = '70' />
+                    {user.firstName}
+                    <button onClick={this.props.deleteUser} value={userIndex}> Delete </button>
                 </li>
             )}
         </ul>;
     }
  });
 
-var TaskApp = React.createClass({
+var AppMUser = React.createClass({
     getInitialState: function(){
         return {
           users : [{
@@ -42,32 +34,30 @@ var TaskApp = React.createClass({
               "firstName": "James",
               "lastName": "Bond",
               "photo": "http://georgesjournal.files.wordpress.com/2012/02/007_at_50_ge_pierece_brosnan.jpg",
-              "friends": [2]
-          }],
-             task: ''
+              "friends": [2],
+              templeUser: ''
+          }]
         }
     },
 
-    deleteTask: function(e) {
-        var taskIndex = parseInt(e.target.value, 10);
-        console.log('remove task: %d', taskIndex, this.state.users[taskIndex]);
+    deleteUser: function(e) {
+        var userIndex = parseInt(e.target.value);
         this.setState(state => {
-            state.users.splice(taskIndex, 1);
+            state.users.splice(userIndex, 1);
             return {users: state.users};
         });
     },
 
     onChange: function(e) {
-        this.setState({ task: e.target.value });
+        this.setState({ user: e.target.value });
     },
 
 
 
-    addTask:function (e){
+    addUser:function (e){
         this.setState({
-            users: this.state.users.concat([this.state.task]),
+            users: this.state.users.concat([this.state.templeUser]),
 
-            task: ''
         })
 
         e.preventDefault();
@@ -76,16 +66,16 @@ var TaskApp = React.createClass({
     render: function(){
         return(
             <div>
-                <h1>My Task </h1>
-                <TaskList users={this.state.users} deleteTask={this.deleteTask} />
+                <h1>LIST USER </h1>
+                <UsersList users={this.state.users} deleteUser={this.deleteUser} />
 
-                <form onSubmit={this.addTask}>
-                    <input onChange={this.onChange} type="text" value={this.state.task}/>
-                    <button> Add Task </button>
+                <form onSubmit={this.addUser}>
+                    <input onChange={this.onChange} type="text" value={this.state.user}/>
+                    <button> Add Name User </button>
                 </form>
             </div>
         );
     }
 });
 
-React.render(<TaskApp />, document.getElementById('appMUser'));
+React.render(<AppMUser />, document.getElementById('appMUser'));
