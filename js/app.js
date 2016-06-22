@@ -3,16 +3,16 @@ console.clear();
 var UsersList = React.createClass({
     render: function(){
         return <ul>
-            {this.props.users.map((user, userIndex) =>
+            {this.props.users.map((templeUser, userIndex) =>
                 <li key={userIndex}>
-                    <img src = {user.photo} width = '70' height = '70' />
-                    {user.firstName}
+                    <img src = {templeUser.photo} width = '70' height = '70' />
+                    {templeUser.firstName}
                     <button onClick={this.props.deleteUser} value={userIndex}> Delete </button>
                 </li>
             )}
         </ul>;
     }
- });
+});
 
 var AppMUser = React.createClass({
     getInitialState: function(){
@@ -57,7 +57,7 @@ var AppMUser = React.createClass({
     addUser:function (e){
         this.setState({
             users: this.state.users.concat([this.state.templeUser]),
-
+            templeUser: ''
         })
 
         e.preventDefault();
@@ -70,7 +70,7 @@ var AppMUser = React.createClass({
                 <UsersList users={this.state.users} deleteUser={this.deleteUser} />
 
                 <form onSubmit={this.addUser}>
-                    <input onChange={this.onChange} type="text" value={this.state.user}/>
+                    <input onChange={this.onChange} type="text" value={this.state.templeUser}/>
                     <button> Add Name User </button>
                 </form>
             </div>
