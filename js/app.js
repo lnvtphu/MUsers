@@ -7,7 +7,8 @@ var UsersList = React.createClass({
                     <img src = {templeUser.photo} width = '70' height = '70' />
                     {templeUser.firstName} {templeUser.lastName}{templeUser.id}
                     <button onClick={this.props.deleteUser} value={userIndex}> Delete </button>
-                    <button onClick={this.props.editUser} value ={userIndex}> Edit</button>
+                    <button onClick={this.props.editUser} value={userIndex}> Edit</button>
+                    <button onClick={this.props.makeFriends} value={userIndex}> List Friend</button>
                 </li>
             )}
         </ul>;
@@ -47,10 +48,12 @@ var AppMUser = React.createClass({
             "friends": [2]
         }];
         return {
+
           users,
           templeUser,
           numberUser: users.length,
-          indexUser:' '
+          indexUser:' ',
+          friendsArr: []
         }
     },
 
@@ -106,7 +109,7 @@ var AppMUser = React.createClass({
         }
         e.preventDefault();
     },
-    updateUser: function(e){
+    updateUser: function(){
         if(this.state.templeUser.firstName!='' && this.state.templeUser.lastName!=''){
             var tUser = React.addons.update(this.state.templeUser,{
                 id: {$set: ''},
@@ -127,6 +130,35 @@ var AppMUser = React.createClass({
 
 
     },
+    deleteFriend: function(e){
+        var userIndex = parseInt(e.target.value);
+        this.setState(state => {
+            state.friendsArr.splice(userIndex, 1);
+            return {
+                friendsArr: state.friendsArr
+
+            };
+        });
+    },
+    makeFriends: function(e){
+            var friendCustomArr = [];
+            var idFriendArr = this.state.users[e.target.value].friends;
+            for(i = 0; i<this.state.numberUser; i++ ){
+                for(j = 0; j<idFriendArr.length; j++){
+                    if(idFriendArr[j]==this.state.users[i].id)
+                    {
+                        var friend = {
+                            'id': idFriendArr[j],
+                            'name': this.state.users[i].firstName
+                        }
+                        friendCustomArr.push(friend);
+                    }
+                }
+            }
+            this.setState({
+                friendsArr: friendCustomArr
+            });
+    },
     render: function(){
         return(
             <div>
@@ -135,17 +167,19 @@ var AppMUser = React.createClass({
                 <button onClick={this.addUser}> Add User </button>
                 <button onClick={this.updateUser}> Update User</button>
                 <h1>LIST USER </h1>
-                <UsersList users={this.state.users} deleteUser={this.deleteUser} editUser={this.editUser}/>
-
+                <UsersList users={this.state.users} deleteUser={this.deleteUser} editUser={this.editUser} makeFriends={this.makeFriends}/>
+                <ListFriends friendsArr={this.state.friendsArr} deleteFriend={this.deleteFriend}/>
             </div>
         );
     }
 });
 var ListFriends = React.createClass({
     render: function(){
-        return<ul>
-            {this.props.users.map((templeUser, userIndex) =>
-                <li key={userIndex}>
+        return <ul>
+            {this.props.friendsArr.map((templeFriend, friendIndex) =>
+                <li key={friendIndex}>
+                {templeFriend.name}
+                <button onClick={this.props.deleteFriend} value={friendIndex}>x</button>
                 </li>
             )}
         </ul>;
