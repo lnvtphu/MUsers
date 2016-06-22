@@ -1,17 +1,21 @@
 
 var UsersList = React.createClass({
     render: function(){
-        return <ul>
+        return <div>
             {this.props.users.map((templeUser, userIndex) =>
-                <li key={userIndex}>
-                    <img src = {templeUser.photo} width = '70' height = '70' />
-                    {templeUser.firstName} {templeUser.lastName}{templeUser.id}
-                    <button onClick={this.props.deleteUser} value={userIndex}> Delete </button>
-                    <button onClick={this.props.editUser} value={userIndex}> Edit</button>
-                    <button onClick={this.props.makeFriends} value={userIndex}> List Friend</button>
-                </li>
+                <div style={listUserStyle} key={userIndex}>
+                    <div>
+                        <img src = {templeUser.photo} width = '70' height = '70' />
+                        {templeUser.firstName}
+                    </div>
+                    <div>
+                        <button onClick={this.props.deleteUser} value={userIndex}> Delete </button>
+                        <button onClick={this.props.editUser} value={userIndex}> Edit</button>
+                        <button onClick={this.props.makeFriends} value={userIndex}> List Friend</button>
+                    </div>
+                </div>
             )}
-        </ul>;
+        </div>;
     }
  });
 
@@ -91,12 +95,13 @@ var AppMUser = React.createClass({
 
     addUser:function (e){
 
-        if(this.state.templeUser.firstName!='' && this.state.templeUser.lastName!=''){
+        if(this.state.templeUser.firstName!='' || this.state.templeUser.lastName!=''){
             var userID = this.state.numberUser +1;
             var tUser = React.addons.update(this.state.templeUser,{
                 id: {$set: ''},
                 firstName : {$set: ''},
-                lastName : {$set: ''}
+                lastName : {$set: ''},
+                photo: {$set: 'https://about.udemy.com/wp-content/plugins/all-in-one-seo-pack/images/default-user-image.png'}
             });
             this.setState({
                 numberUser: userID,
@@ -109,12 +114,16 @@ var AppMUser = React.createClass({
         }
         e.preventDefault();
     },
-    updateUser: function(){
-        if(this.state.templeUser.firstName!='' && this.state.templeUser.lastName!=''){
+    updateUser: function(e){
+        if(this.state.templeUser.firstName=='' || this.state.templeUser.lastName==''){
+            alert('Some field null!');
+        }else {
+
             var tUser = React.addons.update(this.state.templeUser,{
                 id: {$set: ''},
                 firstName : {$set: ''},
-                lastName : {$set: ''}
+                lastName : {$set: ''},
+                photo: {$set: 'https://about.udemy.com/wp-content/plugins/all-in-one-seo-pack/images/default-user-image.png'}
             });
             this.setState(state => {
                 state.users.splice(this.state.indexUser, 1, this.state.templeUser);
@@ -123,11 +132,7 @@ var AppMUser = React.createClass({
                     templeUser: tUser
                 };
             });
-        }else {
-            alert('Some field null!');
         }
-        e.preventDefault();
-
 
     },
     deleteFriend: function(e){
@@ -160,31 +165,41 @@ var AppMUser = React.createClass({
             });
     },
     render: function(){
+
         return(
-            <div>
-              <div>
-                <input  placeholder="firstName" onChange={this.onChangeFirtname} type="text" value={this.state.templeUser.firstName}/>
-                <input  placeholder="lastName" onChange={this.onChangeLastname} type="text" value={this.state.templeUser.lastName}/>
-                <button onClick={this.addUser}> Add User </button>
-                <button onClick={this.updateUser}> Update User</button>
-              </div>
-                <h1>LIST USER </h1>
+            <div style={mainStyle}>
+                  <div>
+                        <span>Firt Name: </span>
+                        <input  placeholder="firstName" onChange={this.onChangeFirtname} type="text" value={this.state.templeUser.firstName}/>
+                        <span>Last Name: </span>
+                        <input  placeholder="lastName" onChange={this.onChangeLastname} type="text" value={this.state.templeUser.lastName}/>
+                  </div>
+                  <div>
+                      <button onClick={this.addUser}> Add User </button>
+                      <button onClick={this.updateUser}> Update User</button>
+                  </div>
+              <div style={leftStyle}>
+                <h4>LIST USER </h4>
                 <UsersList users={this.state.users} deleteUser={this.deleteUser} editUser={this.editUser} makeFriends={this.makeFriends}/>
+              </div>
+              <div style={rightStyle}>
+                <span>Friends</span>
                 <ListFriends friendsArr={this.state.friendsArr} deleteFriend={this.deleteFriend}/>
+              </div>
             </div>
         );
     }
 });
 var ListFriends = React.createClass({
     render: function(){
-        return <ul>
+        return <div>
             {this.props.friendsArr.map((templeFriend, friendIndex) =>
-                <li key={friendIndex}>
-                {templeFriend.name}
-                <button onClick={this.props.deleteFriend} value={friendIndex}>x</button>
-                </li>
+                <div key={friendIndex}>
+                    {templeFriend.name}
+                    <button onClick={this.props.deleteFriend} value={friendIndex}>x</button>
+                </div>
             )}
-        </ul>;
+        </div>;
     }
 });
 React.render(<AppMUser />, document.getElementById('appMUser'));
