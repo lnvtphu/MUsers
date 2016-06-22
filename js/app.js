@@ -162,10 +162,12 @@ var AppMUser = React.createClass({
     render: function(){
         return(
             <div>
+              <div>
                 <input  placeholder="firstName" onChange={this.onChangeFirtname} type="text" value={this.state.templeUser.firstName}/>
                 <input  placeholder="lastName" onChange={this.onChangeLastname} type="text" value={this.state.templeUser.lastName}/>
                 <button onClick={this.addUser}> Add User </button>
                 <button onClick={this.updateUser}> Update User</button>
+              </div>
                 <h1>LIST USER </h1>
                 <UsersList users={this.state.users} deleteUser={this.deleteUser} editUser={this.editUser} makeFriends={this.makeFriends}/>
                 <ListFriends friendsArr={this.state.friendsArr} deleteFriend={this.deleteFriend}/>
