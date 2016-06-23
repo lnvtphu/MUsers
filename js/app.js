@@ -1,9 +1,9 @@
 
 var UsersList = React.createClass({
     render: function(){
-        return <div>
+        return <ul className='list-group listUser'>
             {this.props.users.map((templeUser, userIndex) =>
-                <div style={listUserStyle} key={userIndex}>
+                <li className='list-group-item' key={userIndex}>
                     <div>
                         <img src = {templeUser.photo} width = '70' height = '70' />
                         {templeUser.firstName}
@@ -13,9 +13,9 @@ var UsersList = React.createClass({
                         <button onClick={this.props.editUser} value={userIndex}> Edit</button>
                         <button onClick={this.props.makeFriends} value={userIndex}> List Friend</button>
                     </div>
-                </div>
+                </li>
             )}
-        </div>;
+        </ul>;
     }
  });
 
@@ -25,6 +25,9 @@ var AppMUser = React.createClass({
       indexUser: React.PropTypes.number.isRequired
     },
     getInitialState: function(){
+        var divListFriend = {
+            marginTop: '0'
+        }
         var templeUser = {
             "id": "",
             "firstName": "",
@@ -52,12 +55,12 @@ var AppMUser = React.createClass({
             "friends": [2]
         }];
         return {
-
           users,
           templeUser,
           numberUser: users.length,
-          indexUser:' ',
-          friendsArr: []
+          indexUser: 0,
+          friendsArr: [],
+          divListFriend
         }
     },
 
@@ -147,6 +150,9 @@ var AppMUser = React.createClass({
     },
     makeFriends: function(e){
             var friendCustomArr = [];
+            var divStyle = React.addons.update(this.state.divListFriend,{
+                marginTop:{$set: (e.target.value)*50}
+            });
             var idFriendArr = this.state.users[e.target.value].friends;
             for(i = 0; i<this.state.numberUser; i++ ){
                 for(j = 0; j<idFriendArr.length; j++){
@@ -161,45 +167,47 @@ var AppMUser = React.createClass({
                 }
             }
             this.setState({
-                friendsArr: friendCustomArr
+                friendsArr: friendCustomArr,
+                divListFriend: divStyle
             });
     },
     render: function(){
 
         return(
-            <div style={mainStyle}>
-                  <div>
-                        <span>Firt Name: </span>
-                        <input  placeholder="firstName" onChange={this.onChangeFirtname} type="text" value={this.state.templeUser.firstName}/>
-                        <span>Last Name: </span>
-                        <input  placeholder="lastName" onChange={this.onChangeLastname} type="text" value={this.state.templeUser.lastName}/>
+             <div className='form'>
+                  <div className='input-group'>
+                        <span className='input-group-addon'>Last Name: </span>
+                        <input className='form-control' placeholder="lastName" onChange={this.onChangeLastname} type="text" value={this.state.templeUser.lastName}/>
+                  </div>
+                  <div className='input-group'>
+                        <span className='input-group-addon'>Firt Name: </span>
+                        <input className='form-control' placeholder="firstName" onChange={this.onChangeFirtname} type="text" value={this.state.templeUser.firstName}/>
                   </div>
                   <div>
                       <button onClick={this.addUser}> Add User </button>
                       <button onClick={this.updateUser}> Update User</button>
                   </div>
-              <div style={leftStyle}>
-                <h4>LIST USER </h4>
-                <UsersList users={this.state.users} deleteUser={this.deleteUser} editUser={this.editUser} makeFriends={this.makeFriends}/>
-              </div>
-              <div style={rightStyle}>
-                <span>Friends</span>
-                <ListFriends friendsArr={this.state.friendsArr} deleteFriend={this.deleteFriend}/>
-              </div>
+                  <div className='leftStyle'>
+                      <UsersList users={this.state.users} deleteUser={this.deleteUser} editUser={this.editUser} makeFriends={this.makeFriends}/>
+                  </div>
+                  <div className='rightStyle'>
+                      <ListFriends friendsArr={this.state.friendsArr} deleteFriend={this.deleteFriend}/>
+                 </div>
+                 <div className='clear'></div>
             </div>
         );
     }
 });
 var ListFriends = React.createClass({
     render: function(){
-        return <div>
+        return <ul className='list-group'>
             {this.props.friendsArr.map((templeFriend, friendIndex) =>
-                <div key={friendIndex}>
-                    {templeFriend.name}
+                <li className='list-group-item' key={friendIndex}>
+                    <span>{templeFriend.name}</span>
                     <button onClick={this.props.deleteFriend} value={friendIndex}>x</button>
-                </div>
+                </li>
             )}
-        </div>;
+        </ul>;
     }
 });
 React.render(<AppMUser />, document.getElementById('appMUser'));
