@@ -49,7 +49,7 @@
 
     //view result
     var  View =  React.createClass({
-      updateValue(valueChange){
+      viewValue(valueChange){
         this.setState({
           value : valueChange
         })
@@ -63,7 +63,7 @@
         return(
           <div>
             <h4>{this.state.value}</h4>
-            <Input value={this.state.value}  updateValue={this.updateValue}/>
+            <Input value={this.state.value}  updateValue={this.viewValue}/>
           </div>
         );
       }

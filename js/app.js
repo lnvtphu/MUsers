@@ -12,44 +12,52 @@ var AppMUser = React.createClass({
             "photo": "https://about.udemy.com/wp-content/plugins/all-in-one-seo-pack/images/default-user-image.png",
             "friends": []
         }
-        var users = [{
-            "id": "1",
-            "firstName": "Tom",
-            "lastName": "Cruise",
-            "photo": "http://cdn2.gossipcenter.com/sites/default/files/imagecache/story_header/photos/tom-cruise-020514sp.jpg",
-            "friends": [2, 3]
-        }, {
-            "id": "2",
-            "firstName": "Maria",
-            "lastName": "Sharapova",
-            "photo": "http://thewallmachine.com/files/1363603040.jpg",
-            "friends": [1]
-        }, {
-            "id": "3",
-            "firstName": "James",
-            "lastName": "Bond",
-            "photo": "http://georgesjournal.files.wordpress.com/2012/02/007_at_50_ge_pierece_brosnan.jpg",
-            "friends": [2]
-        }];
+        var users = [];
         return {
-          users,
-          templeUser,
-          numberUser: users.length,
-          indexUser: 0,
-          friendsArr: []
+            url: 'http://127.0.0.1:8080/',
+            users,
+            templeUser,
+            numberUser: users.length,
+            indexUser: 0,
+            friendsArr: []
         }
     },
+
+
+  componentDidMount: function() {
+    this.serverRequest = $.get(this.state.url+'listusers', function (result) {
+        this.setState({
+          users : result
+        });
+    }.bind(this));
+  },
+  componentWillUnmount: function() {
+    this.serverRequest.abort();
+  },
     //delete user on list users
     deleteUser: function(e) {
-        var userIndex = parseInt(e.target.value);
-        var userID = this.state.numberUser - 1;
-        this.setState(state => {
-            state.users.splice(userIndex, 1);
-            return {
-                users: state.users,
-                numberUser: userID
-            };
-        });
+         var userIndex = parseInt(e.target.value);
+         var userID = this.state.numberUser - 1;
+        $.ajax({
+             url: this.state.url+'deleteuser',
+             dataType: 'json',
+             type: 'POST',
+             data: {id: userIndex},
+             success: function(data) {
+                 console.log(data);
+                 if(data.Result=='ok'){
+                     this.setState(function(state) {
+                         state.users.splice(userIndex, 1);
+                         return {
+                             users: state.users,
+                             numberUser: userID
+                         };
+                     });
+                 }else {
+                     alert("delete error");
+                 }
+         }.bind(this)
+       });
     },
     //view info of user select
     editUser: function(e){
