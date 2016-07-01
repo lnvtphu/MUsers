@@ -23,7 +23,6 @@ var AppMUser = React.createClass({
         }
     },
 
-
   componentDidMount: function() {
     this.serverRequest = $.get(this.state.url+'listusers', function (result) {
         this.setState({
@@ -85,22 +84,33 @@ var AppMUser = React.createClass({
     //event add new user
     addUser:function (e){
 
-        if(this.state.templeUser.firstName=='' || this.state.templeUser.lastName==''){
-            alert('Some field null!');
-            console.log(this.state.users);
-        }else {
-            var userID = this.state.numberUser +1;
-            var tUser = React.addons.update(this.state.templeUser,{
-                id: {$set: ''},
-                firstName : {$set: ''},
-                lastName : {$set: ''},
-                photo: {$set: 'https://about.udemy.com/wp-content/plugins/all-in-one-seo-pack/images/default-user-image.png'}
-            });
-            this.setState({
-                numberUser: userID,
-                users: this.state.users.concat([this.state.templeUser]),
-                templeUser: tUser
-            });
+        // if(this.state.templeUser.firstName=='' || this.state.templeUser.lastName==''){
+        //     alert('Some field null!');
+        //     console.log(this.state.users);
+        // }else {
+        //     var userID = this.state.numberUser +1;
+        //     $.ajax({
+        //          url: this.state.url+'adduser',
+        //          dataType: 'json',
+        //          type: 'PUT',
+        //          data: this.state.templeUser,
+        //          success: function(data) {
+        //                 this.forceUpdate();
+        //              }
+        //      }.bind(this)
+        //    });
+
+            // var tUser = React.addons.update(this.state.templeUser,{
+            //     id: {$set: ''},
+            //     firstName : {$set: ''},
+            //     lastName : {$set: ''},
+            //     photo: {$set: 'https://about.udemy.com/wp-content/plugins/all-in-one-seo-pack/images/default-user-image.png'}
+            // });
+            // this.setState({
+            //     numberUser: userID,
+            //     users: this.state.users.concat([this.state.templeUser]),
+            //     templeUser: tUser
+            // });
         }
         e.preventDefault();
     },
