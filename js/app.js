@@ -1,12 +1,11 @@
 
 var AppMUser = React.createClass({
     propTypes: function() {
-      numberUser: React.PropTypes.number.isRequired
       indexUser: React.PropTypes.number.isRequired
     },
     getInitialState: function(){
         var templeUser = {
-            "id": "",
+            "_id": "",
             "firstName": "",
             "lastName": "",
             "photo": "https://about.udemy.com/wp-content/plugins/all-in-one-seo-pack/images/default-user-image.png",
@@ -15,11 +14,12 @@ var AppMUser = React.createClass({
         var users = [];
         return {
             url: 'http://127.0.0.1:8080/',
-            users,
+            users:[],
             templeUser,
-            numberUser: users.length,
             indexUser: 0,
-            friendsArr: []
+            friendsArr: [],
+            userArr: [],
+            idFriendArr: []
         }
     },
 
@@ -36,25 +36,21 @@ var AppMUser = React.createClass({
     //delete user on list users
     deleteUser: function(e) {
          var userIndex = parseInt(e.target.value);
-         var userID = this.state.numberUser - 1;
+         var idUser = this.state.users[userIndex]._id;
+         console.log(idUser);
         $.ajax({
              url: this.state.url+'deleteuser',
              dataType: 'json',
-             type: 'POST',
-             data: {id: userIndex},
+             type: 'DELETE',
+             data: {_id: idUser},
              success: function(data) {
                  console.log(data);
-                 if(data.Result=='ok'){
                      this.setState(function(state) {
                          state.users.splice(userIndex, 1);
                          return {
-                             users: state.users,
-                             numberUser: userID
+                             users: state.users
                          };
                      });
-                 }else {
-                     alert("delete error");
-                 }
          }.bind(this)
        });
     },
@@ -64,12 +60,19 @@ var AppMUser = React.createClass({
         console.log(userEdit);
         this.setState({ templeUser: userEdit, indexUser: parseInt(e.target.value) });
     },
+    onChangeIduser: function(e) {
+        var tFirtname = React.addons.update(this.state.templeUser,{
+            _id: {$set:  e.target.value}
+        });
+        this.setState({
+            templeUser: tFirtname
+        });
+    },
     //event set state when change text field lastName
-    onChangeFirtname: function(e) {
-            var tFirtname = React.addons.update(this.state.templeUser,{
-                firstName: {$set: e.target.value },
-                id: {$set: this.state.numberUser +1}
-              });
+    onChangeFirstname: function(e) {
+        var tFirtname = React.addons.update(this.state.templeUser,{
+            firstName: {$set: e.target.value }
+        });
         this.setState({
             templeUser: tFirtname
         });
@@ -84,76 +87,108 @@ var AppMUser = React.createClass({
     //event add new user
     addUser:function (e){
 
-        // if(this.state.templeUser.firstName=='' || this.state.templeUser.lastName==''){
-        //     alert('Some field null!');
-        //     console.log(this.state.users);
-        // }else {
-        //     var userID = this.state.numberUser +1;
-        //     $.ajax({
-        //          url: this.state.url+'adduser',
-        //          dataType: 'json',
-        //          type: 'PUT',
-        //          data: this.state.templeUser,
-        //          success: function(data) {
-        //                 this.forceUpdate();
-        //              }
-        //      }.bind(this)
-        //    });
-
-            // var tUser = React.addons.update(this.state.templeUser,{
-            //     id: {$set: ''},
-            //     firstName : {$set: ''},
-            //     lastName : {$set: ''},
-            //     photo: {$set: 'https://about.udemy.com/wp-content/plugins/all-in-one-seo-pack/images/default-user-image.png'}
-            // });
-            // this.setState({
-            //     numberUser: userID,
-            //     users: this.state.users.concat([this.state.templeUser]),
-            //     templeUser: tUser
-            // });
+        if(this.state.templeUser.firstName=='' || this.state.templeUser.lastName==''){
+            alert('Some field null!');
+            console.log(this.state.users);
+        }else {
+            console.log(this.state.templeUser);
+            $.ajax({
+                 url: this.state.url+'adduser',
+                 dataType: 'json',
+                 type: 'PUT',
+                 data: this.state.templeUser,
+                 success: function(data) {
+                     console.log(data);
+                     var tUser = React.addons.update(this.state.templeUser,{
+                         id: {$set: ''},
+                         firstName : {$set: ''},
+                         lastName : {$set: ''},
+                         photo: {$set: 'https://about.udemy.com/wp-content/plugins/all-in-one-seo-pack/images/default-user-image.png'}
+                     });
+                     this.setState({
+                         users: this.state.users.concat([this.state.templeUser]),
+                         templeUser: tUser
+                     });
+                 }.bind(this),
+                 error: function(err){
+                     alert(err.responseJSON.Error);
+                 }.bind(this)
+             }
+           );
         }
-        e.preventDefault();
     },
     //event update info user
     updateUser: function(e){
         if(this.state.templeUser.firstName=='' || this.state.templeUser.lastName==''){
             alert('Some field null!');
         }else {
+            $.ajax({
+                 url: this.state.url+'updateuser',
+                 dataType: 'json',
+                 type: 'POST',
+                 data: this.state.templeUser,
+                 success: function(data) {
+                     console.log(data);
+                     var tUser = React.addons.update(this.state.templeUser,{
+                         _id: {$set: ''},
+                         firstName : {$set: ''},
+                         lastName : {$set: ''},
+                         photo: {$set: 'https://about.udemy.com/wp-content/plugins/all-in-one-seo-pack/images/default-user-image.png'}
+                     });
+                     this.setState(state => {
+                         state.users.splice(this.state.indexUser, 1, this.state.templeUser);
+                         return {
+                             users: state.users,
+                             templeUser: tUser
+                         };
+                     });
+                 }.bind(this),
+                 error: function(err){
+                     alert(err.responseJSON.Error);
+                 }.bind(this)
+             }
+            );
 
-            var tUser = React.addons.update(this.state.templeUser,{
-                id: {$set: ''},
-                firstName : {$set: ''},
-                lastName : {$set: ''},
-                photo: {$set: 'https://about.udemy.com/wp-content/plugins/all-in-one-seo-pack/images/default-user-image.png'}
-            });
-            this.setState(state => {
-                state.users.splice(this.state.indexUser, 1, this.state.templeUser);
-                return {
-                    users: state.users,
-                    templeUser: tUser
-                };
-            });
+
         }
 
     },
     //delete friend on list
     deleteFriend: function(e){
-        var userIndex = parseInt(e.target.value);
-        this.setState(state => {
-            state.friendsArr.splice(userIndex, 1);
-            return {
-                friendsArr: state.friendsArr
+        var idUser = this.state.users[this.state.indexUser]._id;
+        var userIndex = e.target.value;
+        console.log(userIndex);
+        console.log(this.state.idFriendArr);
+        $.ajax({
+             url: this.state.url+'deletefriend',
+             dataType: 'json',
+             type: 'POST',
+             data: {_id: idUser, friends: this.state.idFriendArr.splice(userIndex, 1)},
+             success: function(data) {
+                 this.setState(state => {
+                     state.friendsArr.splice(userIndex, 1);
+                     return {
+                         friendsArr: state.friendsArr
+                     };
+                 });
+             }.bind(this),
+             error: function(err){
+                 alert(err.responseJSON.Error);
+             }.bind(this)
+         }
+        );
 
-            };
-        });
+        console.log(this.state.friendsArr);
+        // console.log(this.state.idFriendsArr);
     },
     //event click view list friend of user
     viewFriends: function(e){
             var friendCustomArr = [];
             var idFriendArr = this.state.users[e.target.value].friends;
+            // console.log(idFriendArr);
             for(i = 0; i<this.state.users.length; i++ ){
                 for(j = 0; j<idFriendArr.length; j++){
-                    if(idFriendArr[j]==this.state.users[i].id)
+                    if(idFriendArr[j]==this.state.users[i]._id)
                     {
                         var friend = {
                             'id': idFriendArr[j],
@@ -166,33 +201,58 @@ var AppMUser = React.createClass({
             }
 
             this.setState({
-                friendsArr: friendCustomArr
+                friendsArr: friendCustomArr,
+                indexUser: e.target.value,
+                idFriendArr: idFriendArr
             });
-            console.log(e.target.value);
-            console.log(friendCustomArr);
+    },
+    viewUser: function(e){
+        var usersTemp = [];
+        for(i = 0; i< this.state.users.length; i++){
+            if((this.state.users[i]._id)!=(this.state.users[e.target.value]._id)){
+                var userAddFriend = {
+                    '_id': this.state.users[i]._id,
+                    'firstName': this.state.users[i].firstName
+                };
+                usersTemp.push(userAddFriend);
+            }
+        }
+        this.setState({
+            userArr: usersTemp
+        });
+        // console.log(this.state.userArr);
+        console.log(usersTemp);
     },
     render: function(){
 
         return(
              <div className='form'>
+                 <div className='input-group'>
+                       <span className='input-group-addon spanId'>ID User: </span>
+                       <input className='form-control' placeholder="Id user" onChange={this.onChangeIduser} type="text" value={this.state.templeUser._id}/>
+                 </div>
                   <div className='input-group'>
-                        <span className='input-group-addon'>Last Name: </span>
-                        <input className='form-control' placeholder="lastName" onChange={this.onChangeLastname} type="text" value={this.state.templeUser.lastName}/>
+                        <span className='input-group-addon'>First Name: </span>
+                        <input className='form-control' placeholder="First name" onChange={this.onChangeFirstname} type="text" value={this.state.templeUser.firstName}/>
                   </div>
                   <div className='input-group'>
-                        <span className='input-group-addon'>Firt Name: </span>
-                        <input className='form-control' placeholder="firstName" onChange={this.onChangeFirtname} type="text" value={this.state.templeUser.firstName}/>
+                        <span className='input-group-addon'>Last Name: </span>
+                        <input className='form-control' placeholder="Last name" onChange={this.onChangeLastname} type="text" value={this.state.templeUser.lastName}/>
                   </div>
                   <div>
                       <button onClick={this.addUser}> Add User </button>
                       <button onClick={this.updateUser}> Update User</button>
                   </div>
                   <div className='leftStyle'>
-                      <UsersList users={this.state.users} deleteUser={this.deleteUser} editUser={this.editUser} viewFriends={this.viewFriends}/>
+                      <UsersList users={this.state.users} delete={this.deleteUser} edit={this.editUser} view={this.viewFriends} add={this.viewUser}/>
                   </div>
                   <div className='rightStyle'>
                       <FriendsList friendsArr={this.state.friendsArr} deleteFriend={this.deleteFriend}/>
+                  </div>
+                  <div className='rightStyle'>
+                      <AddFriendList userArr={this.state.userArr} deleteFriend={this.deleteFriend}/>
                  </div>
+
                  <div className='clear'></div>
             </div>
         );
@@ -209,9 +269,10 @@ var UsersList = React.createClass({
                         <span>{templeUser.firstName}</span>
                     </div>
                     <div>
-                        <button onClick={this.props.deleteUser} value={userIndex}> Delete </button>
-                        <button onClick={this.props.editUser} value={userIndex}> Edit</button>
-                        <button onClick={this.props.viewFriends} value={userIndex}> List Friend</button>
+                        <button onClick={this.props.delete} value={userIndex}> Delete </button>
+                        <button onClick={this.props.edit} value={userIndex}> Edit</button>
+                        <button onClick={this.props.view} value={userIndex}>Friend</button>
+                        <button onClick={this.props.add} value={userIndex}>Add Friend</button>
                     </div>
                 </li>
             )}
@@ -226,6 +287,19 @@ var FriendsList = React.createClass({
                 <li className='list-group-item' key={friendIndex}>
                     <span>{templeFriend.name}</span>
                     <button onClick={this.props.deleteFriend} value={friendIndex}>x</button>
+                </li>
+            )}
+        </ul>;
+    }
+});
+
+var AddFriendList = React.createClass({
+    render: function(){
+        return <ul className='list-group'>
+            {this.props.userArr.map((templeFriend, index) =>
+                <li className='list-group-item' key={index}>
+                    <span>{templeFriend.name}</span>
+                    <button onClick={this.props.addFriend} value={index}>x</button>
                 </li>
             )}
         </ul>;

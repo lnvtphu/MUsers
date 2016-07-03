@@ -45,3 +45,6 @@ body{
     width: 500px;
     height: auto;
 }
+.spanId{
+    padding-right: 34px !important;
+}
