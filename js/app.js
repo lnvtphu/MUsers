@@ -30,9 +30,6 @@ var AppMUser = React.createClass({
         });
     }.bind(this));
   },
-  componentWillUnmount: function() {
-    this.serverRequest.abort();
-  },
     //delete user on list users
     deleteUser: function(e) {
          var userIndex = parseInt(e.target.value);
@@ -158,12 +155,14 @@ var AppMUser = React.createClass({
         var idUser = this.state.users[this.state.indexUser]._id;
         var userIndex = e.target.value;
         console.log(userIndex);
-        console.log(this.state.idFriendArr);
+        this.state.idFriendArr.splice(userIndex, 1);
+        var friendsArrTemp = this.state.idFriendArr;
+        console.log(friendsArrTemp.splice(userIndex, 1));
         $.ajax({
              url: this.state.url+'deletefriend',
              dataType: 'json',
              type: 'POST',
-             data: {_id: idUser, friends: this.state.idFriendArr.splice(userIndex, 1)},
+             data: {_id: idUser, friends: friendsArrTemp},
              success: function(data) {
                  this.setState(state => {
                      state.friendsArr.splice(userIndex, 1);
@@ -208,20 +207,24 @@ var AppMUser = React.createClass({
     },
     viewUser: function(e){
         var usersTemp = [];
-        for(i = 0; i< this.state.users.length; i++){
-            if((this.state.users[i]._id)!=(this.state.users[e.target.value]._id)){
-                var userAddFriend = {
-                    '_id': this.state.users[i]._id,
-                    'firstName': this.state.users[i].firstName
-                };
-                usersTemp.push(userAddFriend);
+        var idFrr = this.state.users[e.target.value].friends;
+        var userFrr = [];
+        for (x= 0; x< this.state.users.length; x++){
+            if((this.state.users[x]._id)!= (this.state.users[e.target.value]._id)){
+                userFrr.push(this.state.users[x]);
             }
         }
+        for(i = 0; i< userFrr.length; i++){
+            for(j = 0; j< idFrr.length; j++){
+                if((userFrr[i]._id) ==(idFrr[j])){
+                    userFrr.splice(i,1);
+                }
+            }
+        }
+        console.log(userFrr);
         this.setState({
-            userArr: usersTemp
+            userArr: userFrr
         });
-        // console.log(this.state.userArr);
-        console.log(usersTemp);
     },
     render: function(){
 
@@ -250,7 +253,7 @@ var AppMUser = React.createClass({
                       <FriendsList friendsArr={this.state.friendsArr} deleteFriend={this.deleteFriend}/>
                   </div>
                   <div className='rightStyle'>
-                      <AddFriendList userArr={this.state.userArr} deleteFriend={this.deleteFriend}/>
+                      <AddFriendList userArr={this.state.userArr} addFriend={this.addFriend}/>
                  </div>
 
                  <div className='clear'></div>
@@ -298,8 +301,8 @@ var AddFriendList = React.createClass({
         return <ul className='list-group'>
             {this.props.userArr.map((templeFriend, index) =>
                 <li className='list-group-item' key={index}>
-                    <span>{templeFriend.name}</span>
-                    <button onClick={this.props.addFriend} value={index}>x</button>
+                    <span>{templeFriend.firstName}</span>
+                    <button onClick={this.props.addFriend} value={index}>+</button>
                 </li>
             )}
         </ul>;
